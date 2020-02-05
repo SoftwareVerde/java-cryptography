@@ -143,7 +143,7 @@ public class Secp256k1Signature extends SignatureCore {
 
     @Override
     public Type getType() {
-        return Type.SECP256K1;
+        return Type.ECDSA;
     }
 
     @Override

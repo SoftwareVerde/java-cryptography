@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'com.softwareverde'
-version '1.0.0'
+version '1.1.0'
 
 sourceCompatibility = 1.8
 
@@ -13,10 +13,12 @@ repositories {
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation group: 'org.bouncycastle',           name: 'bcprov-jdk15on',         version: '1.62'
     implementation group: 'org.bouncycastle',           name: 'bcpg-jdk15on',           version: '1.62'
 
-    implementation group: 'com.github.softwareverde',   name: 'java-util',              version: 'v2.0.7'
+    implementation group: 'com.github.softwareverde',   name: 'java-util',              version: 'v2.1.0'
     implementation group: 'com.github.softwareverde',   name: 'java-logging',           version: 'v2.1.0'
 
     implementation group: 'commons-codec',              name: 'commons-codec',          version: '1.13'

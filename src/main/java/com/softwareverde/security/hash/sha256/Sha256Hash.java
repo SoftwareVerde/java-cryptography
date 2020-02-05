@@ -1,9 +1,7 @@
-package com.softwareverde.security.sha256;
+package com.softwareverde.security.hash.sha256;
 
-import com.softwareverde.logging.Logger;
-import com.softwareverde.security.Hash;
+import com.softwareverde.security.hash.Hash;
 import com.softwareverde.util.ByteUtil;
-import com.softwareverde.util.HexUtil;
 
 import java.util.Comparator;
 
@@ -23,21 +21,15 @@ public interface Sha256Hash extends Hash, Comparable<Sha256Hash> {
     };
 
     static Sha256Hash fromHexString(final String hexString) {
-        if (hexString == null) { return null; }
-
-        final byte[] hashBytes = HexUtil.hexStringToByteArray(hexString);
-        if (hashBytes == null) {
-            Logger.warn("NOTICE: Unable to parse hash from string. Invalid hex string: "+ hexString);
-            return null;
-        }
-        if (hashBytes.length != BYTE_COUNT) { return null; }
-
-        return new ImmutableSha256Hash(hashBytes);
+        return ImmutableSha256Hash.fromHexString(hexString);
     }
 
     static Sha256Hash copyOf(final byte[] bytes) {
-        if (bytes.length != BYTE_COUNT) { return null; }
-        return new ImmutableSha256Hash(bytes);
+        return ImmutableSha256Hash.copyOf(bytes);
+    }
+
+    static Sha256Hash wrap(final byte[] bytes) {
+        return MutableSha256Hash.wrap(bytes);
     }
 
     Integer BYTE_COUNT = 32;

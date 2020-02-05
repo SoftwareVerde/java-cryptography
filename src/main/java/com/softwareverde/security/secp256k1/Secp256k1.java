@@ -79,7 +79,7 @@ public class Secp256k1 {
      * Signs the message with the provided PrivateKey.
      *  The `message` variable is not hashed internally; therefore `message` should likely be a hash of the full message.
      */
-    public static Signature sign(final PrivateKey privateKey, final byte[] message) {
+    public static Secp256k1Signature sign(final PrivateKey privateKey, final byte[] message) {
         final ECPrivateKeyParameters privateKeyParameters;
         {
             final BigInteger privateKeyBigInteger = new BigInteger(1, privateKey.getBytes());

@@ -1,4 +1,4 @@
-package com.softwareverde.security;
+package com.softwareverde.security.hash;
 
 import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.util.ByteUtil;
@@ -6,15 +6,21 @@ import com.softwareverde.util.HexUtil;
 
 public class MutableHash extends MutableByteArray implements Hash {
     public static MutableHash fromHexString(final String hexString) {
+        if (hexString == null) { return null; }
+
         final byte[] hashBytes = HexUtil.hexStringToByteArray(hexString);
+        if (hashBytes == null) { return null; }
+
         return new MutableHash(hashBytes);
     }
 
     public static MutableHash wrap(final byte[] bytes) {
+        if (bytes == null) { return null; }
         return new MutableHash(bytes);
     }
 
     public static MutableHash copyOf(final byte[] bytes) {
+        if (bytes == null) { return null; }
         return new MutableHash(ByteUtil.copyBytes(bytes));
     }
 

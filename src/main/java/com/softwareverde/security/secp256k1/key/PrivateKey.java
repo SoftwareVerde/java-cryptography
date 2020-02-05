@@ -70,6 +70,11 @@ public class PrivateKey extends ImmutableByteArray {
         return new PrivateKey(keyBytes);
     }
 
+    public static PrivateKey fromBytes(final byte[] keyBytes) {
+        final ByteArray byteArray = MutableByteArray.wrap(keyBytes);
+        return PrivateKey.fromBytes(byteArray);
+    }
+
     protected PrivateKey() {
         super(new byte[KEY_BYTE_COUNT]);
     }

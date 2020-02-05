@@ -1,11 +1,29 @@
-package com.softwareverde.security.ripemd160;
+package com.softwareverde.security.hash.ripemd160;
 
 import com.softwareverde.constable.Const;
-import com.softwareverde.security.ImmutableHash;
+import com.softwareverde.logging.Logger;
+import com.softwareverde.security.hash.ImmutableHash;
 import com.softwareverde.util.ByteUtil;
+import com.softwareverde.util.HexUtil;
 
 public class ImmutableRipemd160Hash extends ImmutableHash implements Ripemd160Hash, Const {
+    public static ImmutableRipemd160Hash fromHexString(final String hexString) {
+        if (hexString == null) { return null; }
+
+        final byte[] hashBytes = HexUtil.hexStringToByteArray(hexString);
+        if (hashBytes == null) { return null; }
+
+        return new ImmutableRipemd160Hash(hashBytes);
+    }
+
     public static ImmutableRipemd160Hash copyOf(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
+        if (bytes.length != BYTE_COUNT) {
+            Logger.warn("Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
+            return null;
+        }
+
         return new ImmutableRipemd160Hash(bytes);
     }
 

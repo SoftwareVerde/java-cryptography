@@ -1,29 +1,39 @@
-package com.softwareverde.security.ripemd160;
+package com.softwareverde.security.hash.ripemd160;
 
 import com.softwareverde.logging.Logger;
-import com.softwareverde.security.MutableHash;
+import com.softwareverde.security.hash.MutableHash;
 import com.softwareverde.util.ByteUtil;
 import com.softwareverde.util.HexUtil;
 
 public class MutableRipemd160Hash extends MutableHash implements Ripemd160Hash {
     public static MutableRipemd160Hash fromHexString(final String hexString) {
+        if (hexString == null) { return null; }
+
         final byte[] hashBytes = HexUtil.hexStringToByteArray(hexString);
+        if (hashBytes == null) { return null; }
+
         return new MutableRipemd160Hash(hashBytes);
     }
 
     public static MutableRipemd160Hash wrap(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
         if (bytes.length != BYTE_COUNT) {
             Logger.warn("Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
             return null;
         }
+
         return new MutableRipemd160Hash(bytes);
     }
 
     public static MutableRipemd160Hash copyOf(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
         if (bytes.length != BYTE_COUNT) {
             Logger.warn("Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
             return null;
         }
+
         return new MutableRipemd160Hash(ByteUtil.copyBytes(bytes));
     }
 

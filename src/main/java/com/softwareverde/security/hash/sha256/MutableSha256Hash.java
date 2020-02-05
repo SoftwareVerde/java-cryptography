@@ -1,11 +1,21 @@
-package com.softwareverde.security.sha256;
+package com.softwareverde.security.hash.sha256;
 
 import com.softwareverde.logging.Logger;
-import com.softwareverde.security.MutableHash;
+import com.softwareverde.security.hash.MutableHash;
 import com.softwareverde.util.ByteUtil;
+import com.softwareverde.util.HexUtil;
 
 public class MutableSha256Hash extends MutableHash implements Sha256Hash {
+    public static MutableSha256Hash fromHexString(final String hexString) {
+        if (hexString == null) { return null; }
+
+        final byte[] hashBytes = HexUtil.hexStringToByteArray(hexString);
+        return MutableSha256Hash.wrap(hashBytes);
+    }
+
     public static MutableSha256Hash wrap(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
         if (bytes.length != BYTE_COUNT) {
             Logger.warn("NOTICE: Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
             return null;
@@ -14,6 +24,8 @@ public class MutableSha256Hash extends MutableHash implements Sha256Hash {
     }
 
     public static MutableSha256Hash copyOf(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
         if (bytes.length != BYTE_COUNT) {
             Logger.warn("NOTICE: Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
             return null;

@@ -5,7 +5,7 @@ import com.softwareverde.constable.bytearray.MutableByteArray;
 
 public class EmptySignature implements Signature {
     public static final EmptySignature SCHNORR = new EmptySignature(Type.SCHNORR);
-    public static final EmptySignature SECP256K1 = new EmptySignature(Type.SECP256K1);
+    public static final EmptySignature SECP256K1 = new EmptySignature(Type.ECDSA);
 
     protected final Type _type;
     protected final ByteArray _r = new MutableByteArray(0);

@@ -19,7 +19,7 @@
  * Their work was derived from a public-domain implementation of MurmurHash3. ( https://github.com/aappleby/smhasher/blob/master/src/MurmurHash3.cpp )
  */
 
-package com.softwareverde.security.murmur;
+package com.softwareverde.security.hash.murmur;
 
 import com.softwareverde.constable.bytearray.ByteArray;
 
