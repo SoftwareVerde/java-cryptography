@@ -7,10 +7,13 @@ import com.softwareverde.security.secp256k1.key.PrivateKey;
 import com.softwareverde.security.secp256k1.key.PublicKey;
 import com.softwareverde.security.secp256k1.signature.Secp256k1Signature;
 import com.softwareverde.security.secp256k1.signature.Signature;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
+import org.bouncycastle.crypto.signers.DSAKCalculator;
 import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
@@ -77,16 +80,27 @@ public class Secp256k1 {
 
     /**
      * Signs the message with the provided PrivateKey.
-     *  The `message` variable is not hashed internally; therefore `message` should likely be a hash of the full message.
+     *  The `message` parameter is not hashed internally; therefore `message` should likely be a hash of the full message.
+     *  The signature created is deterministic (as per RFC6979).
      */
     public static Secp256k1Signature sign(final PrivateKey privateKey, final byte[] message) {
+        return Secp256k1.sign(privateKey, message, true);
+    }
+
+    /**
+     * Signs the message with the provided PrivateKey.
+     *  The `message` parameter is not hashed internally; therefore `message` should likely be a hash of the full message.
+     *  A deterministic signature is created via HMAC-SHA256 (i.e. RFC6979) if `useDeterministicSignature` is set to true.
+     */
+    public static Secp256k1Signature sign(final PrivateKey privateKey, final byte[] message, final Boolean useDeterministicSignature) {
         final ECPrivateKeyParameters privateKeyParameters;
         {
             final BigInteger privateKeyBigInteger = new BigInteger(1, privateKey.getBytes());
             privateKeyParameters = new ECPrivateKeyParameters(privateKeyBigInteger, Secp256k1.CURVE_DOMAIN);
         }
 
-        final ECDSASigner signer = new ECDSASigner();
+        final DSAKCalculator kCalculator = new HMacDSAKCalculator(new SHA256Digest());
+        final ECDSASigner signer = new ECDSASigner(kCalculator);
         signer.init(true, privateKeyParameters);
 
         final BigInteger r;
