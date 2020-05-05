@@ -29,6 +29,11 @@ public class ImmutableRipemd160Hash extends ImmutableHash implements Ripemd160Ha
 
     protected ImmutableRipemd160Hash(final byte[] bytes) {
         super(new byte[BYTE_COUNT]);
+
+        if (bytes.length != BYTE_COUNT) {
+            throw new RuntimeException("Invalid byte count: " + bytes.length);
+        }
+
         ByteUtil.setBytes(_bytes, bytes);
     }
 

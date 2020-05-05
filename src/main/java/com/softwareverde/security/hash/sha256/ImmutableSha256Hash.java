@@ -18,12 +18,21 @@ public class ImmutableSha256Hash extends ImmutableHash implements Sha256Hash, Co
     }
 
     public static ImmutableSha256Hash copyOf(final byte[] bytes) {
-        if (bytes.length != BYTE_COUNT) { return null; }
+        if (bytes == null) { return null; }
+        if (bytes.length != BYTE_COUNT) {
+            Logger.warn("NOTICE: Unable to wrap bytes as hash. Invalid byte count: "+ bytes.length);
+            return null;
+        }
         return new ImmutableSha256Hash(bytes);
     }
 
     protected ImmutableSha256Hash(final byte[] bytes) {
         super(new byte[BYTE_COUNT]);
+
+        if (bytes.length != BYTE_COUNT) {
+            throw new RuntimeException("Invalid byte count: " + bytes.length);
+        }
+
         ByteUtil.setBytes(_bytes, bytes);
     }
 

@@ -35,6 +35,10 @@ public class MutableSha256Hash extends MutableHash implements Sha256Hash {
 
     protected MutableSha256Hash(final byte[] bytes) {
         super(bytes);
+
+        if (bytes.length != BYTE_COUNT) {
+            throw new RuntimeException("Invalid byte count: " + bytes.length);
+        }
     }
 
     public MutableSha256Hash() {

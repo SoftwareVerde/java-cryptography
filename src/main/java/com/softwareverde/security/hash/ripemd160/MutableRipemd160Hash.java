@@ -39,6 +39,10 @@ public class MutableRipemd160Hash extends MutableHash implements Ripemd160Hash {
 
     protected MutableRipemd160Hash(final byte[] bytes) {
         super(bytes);
+
+        if (bytes.length != BYTE_COUNT) {
+            throw new RuntimeException("Invalid byte count: " + bytes.length);
+        }
     }
 
     public MutableRipemd160Hash() {
