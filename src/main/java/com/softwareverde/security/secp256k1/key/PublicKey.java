@@ -15,6 +15,13 @@ import org.bouncycastle.math.ec.ECPoint;
 import java.math.BigInteger;
 
 public class PublicKey extends ImmutableByteArray implements Const {
+    public static final byte UNCOMPRESSED_FIRST_BYTE = (byte) 0x04;
+    public static final byte COMPRESSED_FIRST_BYTE_0 = (byte) 0x02;
+    public static final byte COMPRESSED_FIRST_BYTE_1 = (byte) 0x03;
+
+    public static final Integer COMPRESSED_BYTE_COUNT = 33;
+    public static final Integer UNCOMPRESSED_BYTE_COUNT = 65;
+
     public static PublicKey fromBytes(final ByteArray bytes) {
         if (bytes == null) { return null; }
 
@@ -111,17 +118,17 @@ public class PublicKey extends ImmutableByteArray implements Const {
     }
 
     protected Boolean _isCompressed() {
-        if (_bytes.length != 33) { return false; }
+        if (_bytes.length != COMPRESSED_BYTE_COUNT) { return false; }
 
         final byte firstByte = _bytes[0];
-        return ( (firstByte == (byte) 0x02) || (firstByte == (byte) 0x03) );
+        return ( (firstByte == COMPRESSED_FIRST_BYTE_0) || (firstByte == COMPRESSED_FIRST_BYTE_1) );
     }
 
     protected Boolean _isDecompressed() {
-        if (_bytes.length != 65) { return false; }
+        if (_bytes.length != UNCOMPRESSED_BYTE_COUNT) { return false; }
 
         final byte firstByte = _bytes[0];
-        return (firstByte == (byte) 0x04);
+        return (firstByte == UNCOMPRESSED_FIRST_BYTE);
     }
 
     protected PublicKey(final byte[] bytes) {
@@ -155,9 +162,9 @@ public class PublicKey extends ImmutableByteArray implements Const {
         if (_bytes.length == 0) { return this; } // NOP
         if (_isCompressed()) { return this; }
 
-        final Integer coordinateByteCount = ((_bytes.length - 1) / 2);
+        final int coordinateByteCount = ((_bytes.length - 1) / 2);
 
-        final Integer prefixByteCount = 1;
+        final int prefixByteCount = 1;
         // final byte prefix = _bytes[0];
         final byte[] publicKeyPointX = new byte[coordinateByteCount];
         final byte[] publicKeyPointY = new byte[coordinateByteCount];
@@ -167,7 +174,7 @@ public class PublicKey extends ImmutableByteArray implements Const {
                 publicKeyPointY[i] = _bytes[prefixByteCount + coordinateByteCount + i];
             }
         }
-        final Boolean yCoordinateIsEven = ((publicKeyPointY[coordinateByteCount - 1] & 0xFF) % 2 == 0);
+        final boolean yCoordinateIsEven = ((publicKeyPointY[coordinateByteCount - 1] & 0xFF) % 2 == 0);
         final byte compressedPublicKeyPrefix = (yCoordinateIsEven ? (byte) 0x02 : (byte) 0x03);
         final byte[] compressedPublicKeyPoint = new byte[coordinateByteCount + prefixByteCount];
         {
