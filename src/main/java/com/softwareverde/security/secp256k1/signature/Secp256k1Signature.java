@@ -41,7 +41,7 @@ public class Secp256k1Signature extends SignatureCore {
             return bytes;
         }
 
-        final Integer skippedByteCount;
+        final int skippedByteCount;
         {
             int firstNonZeroIndex = 0;
             for (int i = 0; i < byteArray.getByteCount(); ++i) {
