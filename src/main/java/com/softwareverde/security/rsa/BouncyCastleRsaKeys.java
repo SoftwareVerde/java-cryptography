@@ -11,7 +11,7 @@ import org.bouncycastle.bcpg.RSASecretBCPGKey;
 import org.bouncycastle.crypto.AsymmetricBlockCipher;
 import org.bouncycastle.crypto.Signer;
 import org.bouncycastle.crypto.digests.SHA256Digest;
-import org.bouncycastle.crypto.encodings.PKCS1Encoding;
+import org.bouncycastle.crypto.encodings.OAEPEncoding;
 import org.bouncycastle.crypto.engines.RSAEngine;
 import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.params.RSAKeyParameters;
@@ -65,7 +65,7 @@ public class BouncyCastleRsaKeys implements RsaKeys {
             throw new RuntimeException("Unable to store private key information", exception);
         }
 
-        _cipher = new PKCS1Encoding(new RSAEngine());
+        _cipher = new OAEPEncoding(new RSAEngine());
         _signer = new RSADigestSigner(new SHA256Digest());
     }
 
@@ -82,7 +82,7 @@ public class BouncyCastleRsaKeys implements RsaKeys {
             throw new IOException("Unable to convert keys", exception);
         }
 
-        _cipher = new PKCS1Encoding(new RSAEngine());
+        _cipher = new OAEPEncoding(new RSAEngine());
         _signer = new RSADigestSigner(new SHA256Digest());
     }
 
@@ -156,7 +156,7 @@ public class BouncyCastleRsaKeys implements RsaKeys {
 
         try {
             AsymmetricKeyParameter underlyingPublicKey = _createPublicKey(publicKey);
-            AsymmetricBlockCipher cipher = new PKCS1Encoding(new RSAEngine());
+            AsymmetricBlockCipher cipher = new OAEPEncoding(new RSAEngine());
 
             cipher.init(true, underlyingPublicKey);
             return cipher.processBlock(plainText, 0, plainText.length);
