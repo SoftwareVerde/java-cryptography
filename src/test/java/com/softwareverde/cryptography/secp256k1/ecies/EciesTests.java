@@ -109,6 +109,28 @@ public class EciesTests {
     }
 
     @Test
+    public void encrypt_and_decrypt_with_ephemeral_sender() {
+        // Setup
+        final PrivateKey bobPrivateKey = PrivateKey.fromHexString("2B57C7C5E408CE927EEF5E2EFB49CFDADDE77961D342DAA72284BB3D6590862D");
+        Assert.assertNotNull(bobPrivateKey);
+
+        final ByteArray message = ByteArray.wrap(StringUtil.stringToBytes("attack at dawn"));
+
+        final EciesEncrypt senderEcies = new EciesEncrypt(bobPrivateKey.getPublicKey().compress());
+
+        final EciesDecrypt receiverEcies = new EciesDecrypt(bobPrivateKey);
+
+        // Action
+        final ByteArray encryptedValue = senderEcies.encrypt(message);
+        final ByteArray decryptedValue = receiverEcies.decrypt(encryptedValue);
+
+        // Assert
+        Assert.assertNotNull(encryptedValue);
+        Assert.assertNotNull(decryptedValue);
+        Assert.assertEquals(message, decryptedValue);
+    }
+
+    @Test
     public void fail_decryption_when_sender_is_not_expected_sender() {
         // Setup
         final PrivateKey alicePrivateKey = PrivateKey.fromHexString("77E06ABC52BF065CB5164C5DECA839D0276911991A2730BE4D8D0A0307DE7CEB");
