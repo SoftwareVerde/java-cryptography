@@ -1,6 +1,7 @@
 package com.softwareverde.cryptography.secp256k1.ecies;
 
 import com.softwareverde.constable.bytearray.ByteArray;
+import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.cryptography.secp256k1.key.PrivateKey;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import com.softwareverde.cryptography.util.HashUtil;
@@ -58,11 +59,11 @@ public class EciesDecrypt {
         if (_requireSenderPublicKey) {
             final ByteArray publicKeyBytes;
             if (Util.areEqual(PublicKey.UNCOMPRESSED_FIRST_BYTE, data.getByte(0))) {
-                publicKeyBytes = ByteArray.wrap(data.getBytes(0, PublicKey.UNCOMPRESSED_BYTE_COUNT));
+                publicKeyBytes = MutableByteArray.wrap(data.getBytes(0, PublicKey.UNCOMPRESSED_BYTE_COUNT));
                 publicKeyByteCount = PublicKey.UNCOMPRESSED_BYTE_COUNT;
             }
             else {
-                publicKeyBytes = ByteArray.wrap(data.getBytes(0, PublicKey.COMPRESSED_BYTE_COUNT));
+                publicKeyBytes = MutableByteArray.wrap(data.getBytes(0, PublicKey.COMPRESSED_BYTE_COUNT));
                 publicKeyByteCount = PublicKey.COMPRESSED_BYTE_COUNT;
             }
             sendersPublicKey = PublicKey.fromBytes(publicKeyBytes).compress();
@@ -86,7 +87,7 @@ public class EciesDecrypt {
         final ByteArray c;
         {
             final int cByteCount = (data.getByteCount() - publicKeyByteCount - hmacByteCount);
-            c = ByteArray.wrap(data.getBytes(publicKeyByteCount, cByteCount));
+            c = MutableByteArray.wrap(data.getBytes(publicKeyByteCount, cByteCount));
         }
 
         final ByteArray d;
@@ -97,7 +98,7 @@ public class EciesDecrypt {
 
         final ByteArrayBuilder hmacPreImage = new ByteArrayBuilder();
         {
-            final ByteArray initializationVector = ByteArray.wrap(c.getBytes(0, EciesUtil.Aes.INITIALIZATION_VECTOR_BYTE_COUNT));
+            final ByteArray initializationVector = MutableByteArray.wrap(c.getBytes(0, EciesUtil.Aes.INITIALIZATION_VECTOR_BYTE_COUNT));
             final ByteArray ct = EciesUtil.substring(c, EciesUtil.Aes.INITIALIZATION_VECTOR_BYTE_COUNT);
 
             hmacPreImage.appendBytes(initializationVector);
@@ -110,7 +111,7 @@ public class EciesDecrypt {
         final ByteArray d2;
         {
             final PrivateKey kM = EciesUtil.getLastK(sendersPublicKey, _localPrivateKey);
-            d2 = HashUtil.sha256Hmac(hmacPreImage, kM);
+            d2 = HashUtil.sha256Hmac(MutableByteArray.wrap(hmacPreImage.build()), kM);
         }
 
         final boolean checksumMatches = Util.areEqual(d, d2);

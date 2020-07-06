@@ -3,6 +3,7 @@ package com.softwareverde.cryptography.secp256k1.key;
 import com.softwareverde.constable.Const;
 import com.softwareverde.constable.bytearray.ByteArray;
 import com.softwareverde.constable.bytearray.ImmutableByteArray;
+import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.cryptography.hash.sha256.Sha256Hash;
 import com.softwareverde.cryptography.secp256k1.Secp256k1;
 import com.softwareverde.cryptography.secp256k1.signature.Signature;
@@ -70,7 +71,7 @@ public class PublicKey extends ImmutableByteArray implements Const {
 
                 final byte[] xPointBytes = x.toByteArray();
                 compressedPoint[0] = (byte) (yCoordinateIsEven ? 0x02 : 0x03);
-                ByteUtil.setBytes(compressedPoint, ByteUtil.getTailBytes(xPointBytes, 32), 1);
+                ByteUtil.setBytes(compressedPoint, PublicKey.getTailBytes(xPointBytes, 32), 1);
             }
 
             final byte[] decompressedPublicKeyBytes = Secp256k1.decompressPoint(compressedPoint);
@@ -194,5 +195,25 @@ public class PublicKey extends ImmutableByteArray implements Const {
     @Override
     public PublicKey asConst() {
         return this;
+    }
+
+
+    //
+    // Methods copied from of java-util 2.1.3 for compatibility purposes
+    //
+
+    private static byte[] getTailBytes(final byte[] bytes, final Integer byteCount) {
+        final MutableByteArray byteArray = PublicKey.getTailBytes(MutableByteArray.wrap(bytes), byteCount);
+        return byteArray.unwrap();
+    }
+
+    private static MutableByteArray getTailBytes(final ByteArray byteArray, final Integer byteCount) {
+        final int byteArrayByteCount = byteArray.getByteCount();
+        final MutableByteArray bytes = new MutableByteArray(byteCount);
+        for (int i = 0; i < byteCount; ++i) {
+            if (i >= byteArrayByteCount) { break; }
+            bytes.setByte((byteCount - i - 1), byteArray.getByte(byteArrayByteCount - i - 1));
+        }
+        return bytes;
     }
 }

@@ -1,6 +1,7 @@
 package com.softwareverde.cryptography.secp256k1.ecies;
 
 import com.softwareverde.constable.bytearray.ByteArray;
+import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.cryptography.secp256k1.key.PrivateKey;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import com.softwareverde.cryptography.util.HashUtil;
@@ -60,7 +61,7 @@ public class EciesEncrypt {
         final ByteArray initializationVector;
         {
             final ByteArray hmac = (nullableInitializationVector != null ? nullableInitializationVector : HashUtil.sha256Hmac(message, _localPrivateKey));
-            initializationVector = ByteArray.wrap(hmac.getBytes(0, EciesUtil.Aes.INITIALIZATION_VECTOR_BYTE_COUNT));
+            initializationVector = MutableByteArray.wrap(hmac.getBytes(0, EciesUtil.Aes.INITIALIZATION_VECTOR_BYTE_COUNT));
         }
 
         final ByteArray c;
@@ -83,7 +84,7 @@ public class EciesEncrypt {
             }
 
             final PrivateKey kM = EciesUtil.getLastK(_recipientPublicKey, _localPrivateKey);
-            d = HashUtil.sha256Hmac(hmacPreImage, kM);
+            d = HashUtil.sha256Hmac(MutableByteArray.wrap(hmacPreImage.build()), kM);
         }
 
         final ByteArrayBuilder result = new ByteArrayBuilder();
@@ -95,6 +96,6 @@ public class EciesEncrypt {
             result.appendBytes(d);
         }
 
-        return result;
+        return MutableByteArray.wrap(result.build());
     }
 }

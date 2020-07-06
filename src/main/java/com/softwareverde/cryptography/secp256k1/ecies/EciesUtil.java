@@ -22,7 +22,7 @@ import java.security.spec.AlgorithmParameterSpec;
 public class EciesUtil {
     protected static ByteArray substring(final ByteArray byteArray, final Integer offset) {
         final int byteCount = (byteArray.getByteCount() - offset);
-        return ByteArray.wrap(byteArray.getBytes(offset, byteCount));
+        return MutableByteArray.wrap(byteArray.getBytes(offset, byteCount));
     }
 
     public static class Aes {
@@ -42,7 +42,7 @@ public class EciesUtil {
                 final ByteArrayBuilder byteArrayBuilder = new ByteArrayBuilder();
                 byteArrayBuilder.appendBytes(initializationVectorBytes);
                 byteArrayBuilder.appendBytes(cipherText);
-                return byteArrayBuilder;
+                return MutableByteArray.wrap(byteArrayBuilder.build());
             }
             catch (final Exception exception) {
                 Logger.debug("Unable to encrypt data.", exception);
@@ -60,7 +60,7 @@ public class EciesUtil {
 
                 final Cipher aesCipher = Cipher.getInstance(ENCRYPTION_CIPHER);
                 aesCipher.init(Cipher.DECRYPT_MODE, secretKey, initializationVector);
-                return ByteArray.wrap(aesCipher.doFinal(encryptedData.getBytes()));
+                return MutableByteArray.wrap(aesCipher.doFinal(encryptedData.getBytes()));
             }
             catch (final Exception exception) {
                 Logger.debug("Unable to decrypt data.", exception);
