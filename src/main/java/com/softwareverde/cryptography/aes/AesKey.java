@@ -19,6 +19,8 @@ public class AesKey {
 
     private static final String KEY_ALGORITHM = "AES";
     private static final String ENCRYPTION_CIPHER = "AES/GCM/NoPadding"; // Using GCM instead of CBC as it provides authentication
+    private static final int LEGACY_AUTHENTICATION_TAG_LENGTH = 12; // default is tag length is not specified
+    private static final int AUTHENTICATION_TAG_LENGTH = 16; // max allowed value
     private static final int INITIALIZATION_VECTOR_LENGTH = 12; // IV size of 12-bytes is specifically recommended for AES-GCM (more efficient than other lengths)
 
     private SecretKey _key;
@@ -77,13 +79,14 @@ public class AesKey {
         try {
             final Cipher aesCipher = Cipher.getInstance(ENCRYPTION_CIPHER);
             final byte[] initializationVectorBytes = _createInitializationVector();
-            final AlgorithmParameterSpec initializationVector = new GCMParameterSpec(initializationVectorBytes.length * Byte.SIZE, initializationVectorBytes);
+            final AlgorithmParameterSpec initializationVector = new GCMParameterSpec(AUTHENTICATION_TAG_LENGTH * Byte.SIZE, initializationVectorBytes);
             aesCipher.init(Cipher.ENCRYPT_MODE, _key, initializationVector);
             final byte[] cipherText = aesCipher.doFinal(plainText);
 
             // prefix cipher text with initialization vector
             final ByteArrayBuilder byteArrayBuilder = new ByteArrayBuilder();
-            byteArrayBuilder.appendByte((byte) initializationVectorBytes.length);
+            byteArrayBuilder.appendByte((byte) (0x80 | initializationVectorBytes.length));
+            byteArrayBuilder.appendByte((byte) AUTHENTICATION_TAG_LENGTH);
             byteArrayBuilder.appendBytes(initializationVectorBytes);
             byteArrayBuilder.appendBytes(cipherText);
 
@@ -100,10 +103,17 @@ public class AesKey {
     public byte[] decrypt(byte[] cipherText) {
         try {
             // remove initialization vector from cipher text
-            final byte initializationVectorLength = cipherText[0];
-            final int cipherTextOffset = ByteUtil.byteToInteger(initializationVectorLength) + 1;
-            final byte[] initializationVectorBytes = Arrays.copyOfRange(cipherText, 1, cipherTextOffset);
-            final AlgorithmParameterSpec initializationVector = new GCMParameterSpec(initializationVectorLength * Byte.SIZE, initializationVectorBytes);
+            byte initializationVectorLength = cipherText[0];
+            int authenticationTagLength = LEGACY_AUTHENTICATION_TAG_LENGTH;
+            int ivStartIndex = 1;
+            if ((initializationVectorLength & 0x80) != 0) {
+                initializationVectorLength = (byte) (initializationVectorLength ^ 0x80);
+                authenticationTagLength = cipherText[1];
+                ivStartIndex = 2;
+            }
+            int cipherTextOffset = ByteUtil.byteToInteger(initializationVectorLength) + ivStartIndex;
+            final byte[] initializationVectorBytes = Arrays.copyOfRange(cipherText, ivStartIndex, cipherTextOffset);
+            final AlgorithmParameterSpec initializationVector = new GCMParameterSpec(authenticationTagLength * Byte.SIZE, initializationVectorBytes);
             final byte[] encryptedData = Arrays.copyOfRange(cipherText, cipherTextOffset, cipherText.length);
 
             final Cipher aesCipher = Cipher.getInstance(ENCRYPTION_CIPHER);
