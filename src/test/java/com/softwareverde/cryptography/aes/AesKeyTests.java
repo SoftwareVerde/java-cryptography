@@ -43,30 +43,17 @@ public class AesKeyTests {
     }
 
     @Test
-    public void should_perform_legacy_decryption_with_implied_authentication_tag_length() {
+    public void should_decrypt_version_1_format() {
         // Setup
-        final AesKey aesKey = new AesKey(HexUtil.hexStringToByteArray("943CBFA720FA5B76BC8C31CDB618E166221AE8644D3B00F567C77EA4DBD7D9AA"));
+        final AesKey aesKey = new AesKey(HexUtil.hexStringToByteArray("23B3E2B8FFB06B330750AABF727B55E3D31E19AA1AAA77D0E70988F57FE2FD82"));
         final MutableByteArray data = MutableByteArray.wrap(StringUtil.stringToBytes("Test"));
-        final byte[] cipherText = HexUtil.hexStringToByteArray("0C9550E3017B60CEFB003B4E54A026DFC7533DC92F229CB78D63B42021");
+        final byte[] encryptedData = HexUtil.hexStringToByteArray("010C1A6CB9E30EEDB700FD101B03109266C9A8D67FD85D405C6FA9620D0954F8FF64E1");
 
         // Action
-        final byte[] decryptedData = aesKey.decrypt(cipherText);
+        final byte[] decryptedData = aesKey.decrypt(encryptedData);
 
         // Assert
-        Assert.assertTrue(Util.areEqual(data, decryptedData));
-    }
-
-    @Test
-    public void should_perform_decryption_with_specified_authentication_tag_length() {
-        // Setup
-        final AesKey aesKey = new AesKey(HexUtil.hexStringToByteArray("8AB983E6F8E71519D2B683E564047A7D8CD27E2DC8D6C3DED0C41CA1B1BB8287"));
-        final MutableByteArray data = MutableByteArray.wrap(StringUtil.stringToBytes("Test"));
-        final byte[] cipherText = HexUtil.hexStringToByteArray("8C10E19046F0A887F4893C04E28398CDD7F00522E8BB9D96B2B0B1D7ED080E7E8D7A");
-
-        // Action
-        final byte[] decryptedData = aesKey.decrypt(cipherText);
-
-        // Assert
+        Assert.assertFalse(Util.areEqual(encryptedData, decryptedData));
         Assert.assertTrue(Util.areEqual(data, decryptedData));
     }
 }
