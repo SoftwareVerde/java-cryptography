@@ -1,0 +1,11 @@
+This directory contains code purely used for testing cryptography formats in
+other languages.
+
+For python, the cryptography library is used, installed via:
+
+    pip3 install cryptography
+
+For javascript, the crypto-js and buffer libraries are used, installed via:
+
+    npm install
+
