@@ -17,9 +17,7 @@ public class MultisetHash {
     // https://arxiv.org/pdf/1601.06502.pdf
     // https://github.com/tomasvdw/bips/blob/master/ecmh.mediawiki
 
-    protected ECPoint _point;
-
-    protected ECPoint _convertToPoint(final BigInteger x) {
+    protected static ECPoint convertToPoint(final BigInteger x) {
         if (x.compareTo(Secp256k1.CURVE_P) >= 0) { return null; } // Public key is not on the curve.
 
         final int byteCount = 32;
@@ -38,9 +36,7 @@ public class MultisetHash {
         return curve.decodePoint(decompressedPublicKeyBytes);
     }
 
-    protected ECPoint _getPoint(final ByteArray byteArray) {
-        final Sha256Hash byteArrayHash = HashUtil.sha256(byteArray);
-
+    protected static ECPoint getPoint(final Sha256Hash byteArrayHash) {
         long n = 0L;
         while (true) {
             final ByteArrayBuilder byteArrayBuilder = new ByteArrayBuilder();
@@ -49,7 +45,7 @@ public class MultisetHash {
 
             final Sha256Hash xBytes = HashUtil.sha256(byteArrayBuilder);
 
-            final ECPoint ecPoint = _convertToPoint(new BigInteger(1, xBytes.getBytes()));
+            final ECPoint ecPoint = MultisetHash.convertToPoint(new BigInteger(1, xBytes.getBytes()));
             if (ecPoint != null) {
                 return ecPoint;
             }
@@ -58,32 +54,47 @@ public class MultisetHash {
         }
     }
 
+    protected ECPoint _point;
+
     public MultisetHash() {
         _point = Secp256k1.CURVE.getInfinity();
     }
 
     public void merge(final MultisetHash multisetHash) {
         final ECPoint multisetPoint = multisetHash._point;
-        _point = _point.add(multisetPoint).normalize();
+
+        synchronized (this) {
+            _point = _point.add(multisetPoint).normalize();
+        }
     }
 
     public void addItem(final ByteArray byteArray) {
-        final ECPoint point = _getPoint(byteArray);
-        _point = _point.add(point).normalize();
+        final Sha256Hash byteArrayHash = HashUtil.sha256(byteArray);
+        final ECPoint point = MultisetHash.getPoint(byteArrayHash);
+
+        synchronized (this) {
+            _point = _point.add(point).normalize();
+        }
     }
 
     public void removeItem(final ByteArray byteArray) {
-        final ECPoint point = _getPoint(byteArray);
-        _point = _point.subtract(point).normalize();
+        final Sha256Hash byteArrayHash = HashUtil.sha256(byteArray);
+        final ECPoint point = MultisetHash.getPoint(byteArrayHash);
+
+        synchronized (this) {
+            _point = _point.subtract(point).normalize();
+        }
     }
 
     public Sha256Hash getHash() {
-        if (_point.isInfinity()) {
-            return Sha256Hash.EMPTY_HASH;
-        }
+        final ECFieldElement xCoordinate;
+        final ECFieldElement yCoordinate;
+        synchronized (this) {
+            if (_point.isInfinity()) { return Sha256Hash.EMPTY_HASH; }
 
-        final ECFieldElement xCoordinate = _point.getXCoord();
-        final ECFieldElement yCoordinate = _point.getYCoord();
+            xCoordinate = _point.getXCoord();
+            yCoordinate = _point.getYCoord();
+        }
 
         final BigInteger xBigInteger = xCoordinate.toBigInteger();
         final BigInteger yBigInteger = yCoordinate.toBigInteger();
