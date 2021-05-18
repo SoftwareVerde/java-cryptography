@@ -1,7 +1,7 @@
 package com.softwareverde.cryptography.hash.sha512;
 
-import com.softwareverde.logging.Logger;
 import com.softwareverde.cryptography.hash.MutableHash;
+import com.softwareverde.logging.Logger;
 import com.softwareverde.util.ByteUtil;
 import com.softwareverde.util.HexUtil;
 

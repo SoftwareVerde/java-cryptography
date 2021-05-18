@@ -1,9 +1,9 @@
 package com.softwareverde.cryptography.secp256k1.key;
 
-import com.softwareverde.cryptography.secp256k1.Secp256k1;
 import com.softwareverde.constable.bytearray.ByteArray;
 import com.softwareverde.constable.bytearray.ImmutableByteArray;
 import com.softwareverde.constable.bytearray.MutableByteArray;
+import com.softwareverde.cryptography.secp256k1.Secp256k1;
 import com.softwareverde.util.ByteUtil;
 import com.softwareverde.util.HexUtil;
 import com.softwareverde.util.Util;

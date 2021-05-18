@@ -1,8 +1,8 @@
 package com.softwareverde.cryptography.hash.ripemd160;
 
 import com.softwareverde.constable.Const;
-import com.softwareverde.logging.Logger;
 import com.softwareverde.cryptography.hash.ImmutableHash;
+import com.softwareverde.logging.Logger;
 import com.softwareverde.util.ByteUtil;
 import com.softwareverde.util.HexUtil;
 

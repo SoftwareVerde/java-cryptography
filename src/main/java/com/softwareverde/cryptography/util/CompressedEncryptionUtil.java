@@ -1,8 +1,8 @@
 package com.softwareverde.cryptography.util;
 
+import com.softwareverde.cryptography.aes.AesKey;
 import com.softwareverde.logging.Logger;
 import com.softwareverde.logging.LoggerInstance;
-import com.softwareverde.cryptography.aes.AesKey;
 import com.softwareverde.util.IoUtil;
 
 import java.io.ByteArrayInputStream;

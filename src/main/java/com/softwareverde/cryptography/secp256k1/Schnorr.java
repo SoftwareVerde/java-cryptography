@@ -3,38 +3,16 @@ package com.softwareverde.cryptography.secp256k1;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import com.softwareverde.cryptography.secp256k1.signature.Signature;
 import com.softwareverde.cryptography.util.HashUtil;
-import com.softwareverde.util.HexUtil;
 import com.softwareverde.util.bytearray.ByteArrayBuilder;
-import org.bouncycastle.crypto.params.ECDomainParameters;
-import org.bouncycastle.jce.ECNamedCurveTable;
-import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
-import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
 
 public class Schnorr {
-    public static final BigInteger TWO;
-    public static final BigInteger CURVE_P;
-    public static final BigInteger CURVE_N;
-
-    protected static final ECCurve CURVE;
-    protected static final ECPoint CURVE_POINT_G;
-    public static final ECDomainParameters CURVE_DOMAIN;
-
-    static {
-        final ECNamedCurveParameterSpec curveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256k1");
-        CURVE_POINT_G = curveParameterSpec.getG();
-        CURVE = curveParameterSpec.getCurve();
-        CURVE_DOMAIN =  new ECDomainParameters(CURVE, CURVE_POINT_G, curveParameterSpec.getN());
-
-        TWO = BigInteger.valueOf(2L);
-        CURVE_P = new BigInteger(1, HexUtil.hexStringToByteArray("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F"));
-        CURVE_N = new BigInteger(1, HexUtil.hexStringToByteArray("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141"));
-    }
+    public static final BigInteger TWO = BigInteger.valueOf(2L);
 
     protected static BigInteger _jacobi(final BigInteger x) {
-        return x.modPow((CURVE_P.subtract(BigInteger.ONE).divide(TWO)), CURVE_P);
+        return x.modPow((Secp256k1.CURVE_P.subtract(BigInteger.ONE).divide(TWO)), Secp256k1.CURVE_P);
     }
 
     // https://github.com/sipa/bips/blob/bip-schnorr/bip-schnorr.mediawiki
@@ -73,10 +51,10 @@ public class Schnorr {
         if (P.isInfinity()) { return false; }
 
         final BigInteger r = new BigInteger(1, signature.getR().getBytes());
-        if (r.compareTo(CURVE_P) >= 0) { return false; }
+        if (r.compareTo(Secp256k1.CURVE_P) >= 0) { return false; }
 
         final BigInteger s = new BigInteger(1, signature.getS().getBytes());
-        if (s.compareTo(CURVE_N) >= 0) { return false; }
+        if (s.compareTo(Secp256k1.CURVE_N) >= 0) { return false; }
 
         final BigInteger e;
         {
@@ -84,10 +62,10 @@ public class Schnorr {
             hashPreImageBuilder.appendBytes(signature.getR());
             hashPreImageBuilder.appendBytes(P.getEncoded(true));
             hashPreImageBuilder.appendBytes(message);
-            e = new BigInteger(1, HashUtil.sha256(hashPreImageBuilder.build())).mod(CURVE_N);
+            e = new BigInteger(1, HashUtil.sha256(hashPreImageBuilder.build())).mod(Secp256k1.CURVE_N);
         }
 
-        final ECPoint sG = CURVE_POINT_G.multiply(s);
+        final ECPoint sG = Secp256k1.CURVE_POINT_G.multiply(s);
         final ECPoint eP = P.multiply(e);
         final ECPoint R = sG.add(eP.negate()).normalize(); // R = sG - eP
         if (R.isInfinity()) { return false; }

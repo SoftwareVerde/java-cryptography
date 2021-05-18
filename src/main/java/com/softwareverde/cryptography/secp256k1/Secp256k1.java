@@ -2,11 +2,12 @@ package com.softwareverde.cryptography.secp256k1;
 
 import com.softwareverde.constable.bytearray.ByteArray;
 import com.softwareverde.constable.bytearray.MutableByteArray;
-import com.softwareverde.logging.Logger;
 import com.softwareverde.cryptography.secp256k1.key.PrivateKey;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import com.softwareverde.cryptography.secp256k1.signature.Secp256k1Signature;
 import com.softwareverde.cryptography.secp256k1.signature.Signature;
+import com.softwareverde.logging.Logger;
+import com.softwareverde.util.HexUtil;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
@@ -24,22 +25,22 @@ import java.math.BigInteger;
 import java.security.Security;
 
 public class Secp256k1 {
-    public static final ByteArray CURVE_P;
-
-    protected static final ECCurve CURVE;
-    protected static final ECPoint CURVE_POINT_G;
+    public static final ECCurve CURVE;
+    public static final BigInteger CURVE_P;
+    public static final BigInteger CURVE_N;
+    public static final ECPoint CURVE_POINT_G;
     public static final ECDomainParameters CURVE_DOMAIN;
 
     static {
         Security.addProvider(new BouncyCastleProvider());
 
-        final String SECP256K1 = "secp256k1";
-        final ECNamedCurveParameterSpec curveParameterSpec = ECNamedCurveTable.getParameterSpec(SECP256K1);
+        final ECNamedCurveParameterSpec curveParameterSpec = ECNamedCurveTable.getParameterSpec("secp256k1");
         CURVE_POINT_G = curveParameterSpec.getG();
         CURVE = curveParameterSpec.getCurve();
-        CURVE_DOMAIN =  new ECDomainParameters(Secp256k1.CURVE, Secp256k1.CURVE_POINT_G, curveParameterSpec.getN());
+        CURVE_DOMAIN =  new ECDomainParameters(CURVE, CURVE_POINT_G, curveParameterSpec.getN());
 
-        CURVE_P = ByteArray.fromHexString("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+        CURVE_P = new BigInteger(1, HexUtil.hexStringToByteArray("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F"));
+        CURVE_N = new BigInteger(1, HexUtil.hexStringToByteArray("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141"));
     }
 
     public static byte[] getPublicKeyPoint(final byte[] privateKeyBytes) {
@@ -142,7 +143,7 @@ public class Secp256k1 {
             return decompressedPoint.getEncoded(false);
         }
         catch (final Exception exception) {
-            Logger.warn(exception);
+            Logger.trace("Unable to decompress point.", exception);
             return null;
         }
     }

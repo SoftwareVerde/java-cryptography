@@ -6,6 +6,7 @@ import com.softwareverde.constable.bytearray.ImmutableByteArray;
 import com.softwareverde.cryptography.hash.sha256.Sha256Hash;
 import com.softwareverde.cryptography.secp256k1.Secp256k1;
 import com.softwareverde.cryptography.secp256k1.signature.Signature;
+import com.softwareverde.logging.Logger;
 import com.softwareverde.util.ByteUtil;
 import com.softwareverde.util.Container;
 import org.bouncycastle.math.ec.ECAlgorithms;
@@ -38,7 +39,6 @@ public class PublicKey extends ImmutableByteArray implements Const {
         final BigInteger n = Secp256k1.CURVE_DOMAIN.getN();  // Curve order.
         final BigInteger r = new BigInteger(1, signature.getR().getBytes());
         final BigInteger s = new BigInteger(1, signature.getS().getBytes());
-        final BigInteger curveP = new BigInteger(1, Secp256k1.CURVE_P.getBytes());
 
         final int startIndex;
         {
@@ -62,7 +62,7 @@ public class PublicKey extends ImmutableByteArray implements Const {
             // 1.3. Convert the octet string 0216kX to an elliptic curve point R using the conversion routine
             //      specified in Section 2.3.4. If this conversion routine outputs "invalid", then do another
             //      iteration of Step 1.
-            if (x.compareTo(curveP) >= 0) { continue; } // Public key is not on the curve.
+            if (x.compareTo(Secp256k1.CURVE_P) >= 0) { continue; } // Public key is not on the curve.
 
             final byte[] compressedPoint = new byte[32 + 1];
             {
@@ -152,7 +152,10 @@ public class PublicKey extends ImmutableByteArray implements Const {
         if (_isDecompressed()) { return this; }
 
         final byte[] decompressedBytes = Secp256k1.decompressPoint(_bytes);
-        if (decompressedBytes == null) { return this; }
+        if (decompressedBytes == null) {
+            Logger.warn("Unable to decompress PublicKey.");
+            return null;
+        }
 
         decompressedBytes[0] = (byte) 0x04;
         return new PublicKey(decompressedBytes);
