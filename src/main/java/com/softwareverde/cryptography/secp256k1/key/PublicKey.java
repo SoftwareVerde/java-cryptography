@@ -23,6 +23,12 @@ public class PublicKey extends ImmutableByteArray implements Const {
     public static final Integer COMPRESSED_BYTE_COUNT = 33;
     public static final Integer UNCOMPRESSED_BYTE_COUNT = 65;
 
+    public static PublicKey fromBytes(final byte[] bytes) {
+        if (bytes == null) { return null; }
+
+        return new PublicKey(bytes);
+    }
+
     public static PublicKey fromBytes(final ByteArray bytes) {
         if (bytes == null) { return null; }
 
