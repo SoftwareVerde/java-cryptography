@@ -54,14 +54,33 @@ public class MultisetHash {
         }
     }
 
+    protected static ECPoint getPoint(final PublicKey publicKey) {
+        final PublicKey decompressedPublicKey = publicKey.decompress();
+
+        final ECCurve curve = Secp256k1.CURVE_DOMAIN.getCurve();
+        return curve.decodePoint(decompressedPublicKey.getBytes());
+    }
+
     protected ECPoint _point;
 
     public MultisetHash() {
         _point = Secp256k1.CURVE.getInfinity();
     }
 
-    public void merge(final MultisetHash multisetHash) {
+    public MultisetHash(final PublicKey publicKey) {
+        _point = MultisetHash.getPoint(publicKey);
+    }
+
+    public void add(final MultisetHash multisetHash) {
         final ECPoint multisetPoint = multisetHash._point;
+
+        synchronized (this) {
+            _point = _point.add(multisetPoint).normalize();
+        }
+    }
+
+    public void add(final PublicKey multisetHashPublicKey) {
+        final ECPoint multisetPoint = MultisetHash.getPoint(multisetHashPublicKey);
 
         synchronized (this) {
             _point = _point.add(multisetPoint).normalize();
@@ -104,5 +123,10 @@ public class MultisetHash {
         byteArrayBuilder.appendBytes(ByteUtil.getTailBytes(yBigInteger.toByteArray(), Sha256Hash.BYTE_COUNT));
 
         return HashUtil.sha256(byteArrayBuilder);
+    }
+
+    public PublicKey toPublicKey() {
+        final ByteArray compressedBytes = ByteArray.wrap(_point.getEncoded(true));
+        return PublicKey.fromBytes(compressedBytes);
     }
 }

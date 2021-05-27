@@ -2,6 +2,7 @@ package com.softwareverde.cryptography.secp256k1;
 
 import com.softwareverde.constable.bytearray.ByteArray;
 import com.softwareverde.cryptography.hash.sha256.Sha256Hash;
+import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -87,7 +88,7 @@ public class MultisetHashTests {
         d2MultisetHash.addItem(D2_BYTES);
 
         // Action
-        multisetHash.merge(d2MultisetHash);
+        multisetHash.add(d2MultisetHash);
 
         // Assert
         final Sha256Hash value = multisetHash.getHash();
@@ -125,8 +126,8 @@ public class MultisetHashTests {
         d3MultisetHash.addItem(D3_BYTES);
 
         // Action
-        multisetHash.merge(d2MultisetHash);
-        multisetHash.merge(d3MultisetHash);
+        multisetHash.add(d2MultisetHash);
+        multisetHash.add(d3MultisetHash);
 
         // Assert
         final Sha256Hash value = multisetHash.getHash();
@@ -162,6 +163,42 @@ public class MultisetHashTests {
         multisetHash.addItem(D2_BYTES);
         multisetHash.addItem(D3_BYTES);
         multisetHash.removeItem(D3_BYTES);
+
+        // Assert
+        final Sha256Hash value = multisetHash.getHash();
+        Assert.assertEquals(expectedValue, value);
+    }
+
+    @Test
+    public void should_calculate_merged_multiset_hash_of_d1p_d2p_and_d3p() {
+        // Setup
+        final Sha256Hash expectedValue = Sha256Hash.fromHexString("1CBCCDA23D7CE8C5A8B008008E1738E6BF9CFFB1D5B86A92A4E62B5394A636E2");
+
+        final PublicKey d1PublicKey;
+        {
+            final MultisetHash multisetHash = new MultisetHash();
+            multisetHash.addItem(D1_BYTES);
+            d1PublicKey = multisetHash.toPublicKey();
+        }
+
+        final PublicKey d2PublicKey;
+        {
+            final MultisetHash d2MultisetHash = new MultisetHash();
+            d2MultisetHash.addItem(D2_BYTES);
+            d2PublicKey = d2MultisetHash.toPublicKey().compress();
+        }
+
+        final PublicKey d3PublicKey;
+        {
+            final MultisetHash d3MultisetHash = new MultisetHash();
+            d3MultisetHash.addItem(D3_BYTES);
+            d3PublicKey = d3MultisetHash.toPublicKey().decompress();
+        }
+
+        // Action
+        final MultisetHash multisetHash = new MultisetHash(d1PublicKey);
+        multisetHash.add(d2PublicKey);
+        multisetHash.add(d3PublicKey);
 
         // Assert
         final Sha256Hash value = multisetHash.getHash();
