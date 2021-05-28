@@ -1,6 +1,7 @@
 package com.softwareverde.cryptography.secp256k1;
 
 import com.softwareverde.constable.bytearray.ByteArray;
+import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.cryptography.hash.sha256.Sha256Hash;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
 import com.softwareverde.cryptography.util.HashUtil;
@@ -126,7 +127,11 @@ public class MultisetHash {
     }
 
     public PublicKey getPublicKey() {
-        final ByteArray compressedBytes = ByteArray.wrap(_point.getEncoded(true));
+        final byte[] encodedBytes = _point.getEncoded(true);
+        final int offset = (PublicKey.COMPRESSED_BYTE_COUNT - encodedBytes.length);
+        final MutableByteArray compressedBytes = new MutableByteArray(PublicKey.COMPRESSED_BYTE_COUNT); // Ensure the PublicKey is always 33 bytes (i.e. when point is infinity).
+        ByteUtil.setBytes(compressedBytes.unwrap(), encodedBytes, offset);
+
         return PublicKey.fromBytes(compressedBytes);
     }
 }

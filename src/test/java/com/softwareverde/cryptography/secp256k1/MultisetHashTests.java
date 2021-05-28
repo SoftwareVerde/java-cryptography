@@ -1,8 +1,10 @@
 package com.softwareverde.cryptography.secp256k1;
 
 import com.softwareverde.constable.bytearray.ByteArray;
+import com.softwareverde.constable.bytearray.MutableByteArray;
 import com.softwareverde.cryptography.hash.sha256.Sha256Hash;
 import com.softwareverde.cryptography.secp256k1.key.PublicKey;
+import com.softwareverde.util.Util;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,9 +31,11 @@ public class MultisetHashTests {
 
         // Action
         final Sha256Hash value = multisetHash.getHash();
+        final PublicKey publicKey = multisetHash.getPublicKey();
 
         // Assert
         Assert.assertEquals(expectedValue, value);
+        Assert.assertTrue(Util.areEqual(new MutableByteArray(PublicKey.COMPRESSED_BYTE_COUNT), publicKey));
     }
 
     @Test
