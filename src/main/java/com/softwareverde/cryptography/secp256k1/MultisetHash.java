@@ -125,7 +125,7 @@ public class MultisetHash {
         return HashUtil.sha256(byteArrayBuilder);
     }
 
-    public PublicKey toPublicKey() {
+    public PublicKey getPublicKey() {
         final ByteArray compressedBytes = ByteArray.wrap(_point.getEncoded(true));
         return PublicKey.fromBytes(compressedBytes);
     }

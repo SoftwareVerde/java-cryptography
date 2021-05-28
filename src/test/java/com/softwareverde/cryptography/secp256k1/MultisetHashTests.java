@@ -178,21 +178,21 @@ public class MultisetHashTests {
         {
             final MultisetHash multisetHash = new MultisetHash();
             multisetHash.addItem(D1_BYTES);
-            d1PublicKey = multisetHash.toPublicKey();
+            d1PublicKey = multisetHash.getPublicKey();
         }
 
         final PublicKey d2PublicKey;
         {
             final MultisetHash d2MultisetHash = new MultisetHash();
             d2MultisetHash.addItem(D2_BYTES);
-            d2PublicKey = d2MultisetHash.toPublicKey().compress();
+            d2PublicKey = d2MultisetHash.getPublicKey().compress();
         }
 
         final PublicKey d3PublicKey;
         {
             final MultisetHash d3MultisetHash = new MultisetHash();
             d3MultisetHash.addItem(D3_BYTES);
-            d3PublicKey = d3MultisetHash.toPublicKey().decompress();
+            d3PublicKey = d3MultisetHash.getPublicKey().decompress();
         }
 
         // Action
