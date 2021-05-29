@@ -208,4 +208,34 @@ public class MultisetHashTests {
         final Sha256Hash value = multisetHash.getHash();
         Assert.assertEquals(expectedValue, value);
     }
+
+    @Test
+    public void should_noop_when_adding_two_empty_sets() {
+        // Setup
+        final MultisetHash multisetHash = new MultisetHash();
+        final MultisetHash emptyMultisetHash = new MultisetHash();
+        final Sha256Hash expectedValue = Sha256Hash.EMPTY_HASH;
+
+        // Action
+        multisetHash.add(emptyMultisetHash);
+
+        // Assert
+        final Sha256Hash value = multisetHash.getHash();
+        Assert.assertEquals(expectedValue, value);
+    }
+
+    @Test
+    public void should_noop_when_adding_empty_pk() {
+        // Setup
+        final MultisetHash multisetHash = new MultisetHash();
+        final MultisetHash emptyMultisetHash = new MultisetHash();
+        final Sha256Hash expectedValue = Sha256Hash.EMPTY_HASH;
+
+        // Action
+        multisetHash.add(emptyMultisetHash.getPublicKey());
+
+        // Assert
+        final Sha256Hash value = multisetHash.getHash();
+        Assert.assertEquals(expectedValue, value);
+    }
 }

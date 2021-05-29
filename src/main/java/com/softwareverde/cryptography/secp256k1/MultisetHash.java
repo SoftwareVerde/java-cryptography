@@ -57,6 +57,9 @@ public class MultisetHash {
 
     protected static ECPoint getPoint(final PublicKey publicKey) {
         final PublicKey decompressedPublicKey = publicKey.decompress();
+        if (decompressedPublicKey == null) {
+            return Secp256k1.CURVE.getInfinity(); // PublicKey was at infinity.
+        }
 
         final ECCurve curve = Secp256k1.CURVE_DOMAIN.getCurve();
         return curve.decodePoint(decompressedPublicKey.getBytes());
