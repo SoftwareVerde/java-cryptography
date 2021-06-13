@@ -14,7 +14,7 @@ import org.bouncycastle.math.ec.ECPoint;
 
 import java.math.BigInteger;
 
-public class MultisetHash {
+public class EcMultiset {
     // https://arxiv.org/pdf/1601.06502.pdf
     // https://github.com/tomasvdw/bips/blob/master/ecmh.mediawiki
 
@@ -46,7 +46,7 @@ public class MultisetHash {
 
             final Sha256Hash xBytes = HashUtil.sha256(byteArrayBuilder);
 
-            final ECPoint ecPoint = MultisetHash.convertToPoint(new BigInteger(1, xBytes.getBytes()));
+            final ECPoint ecPoint = EcMultiset.convertToPoint(new BigInteger(1, xBytes.getBytes()));
             if (ecPoint != null) {
                 return ecPoint;
             }
@@ -67,16 +67,16 @@ public class MultisetHash {
 
     protected ECPoint _point;
 
-    public MultisetHash() {
+    public EcMultiset() {
         _point = Secp256k1.CURVE.getInfinity();
     }
 
-    public MultisetHash(final PublicKey publicKey) {
-        _point = MultisetHash.getPoint(publicKey);
+    public EcMultiset(final PublicKey publicKey) {
+        _point = EcMultiset.getPoint(publicKey);
     }
 
-    public void add(final MultisetHash multisetHash) {
-        final ECPoint multisetPoint = multisetHash._point;
+    public void add(final EcMultiset ecMultiset) {
+        final ECPoint multisetPoint = ecMultiset._point;
 
         synchronized (this) {
             _point = _point.add(multisetPoint).normalize();
@@ -84,7 +84,7 @@ public class MultisetHash {
     }
 
     public void add(final PublicKey multisetHashPublicKey) {
-        final ECPoint multisetPoint = MultisetHash.getPoint(multisetHashPublicKey);
+        final ECPoint multisetPoint = EcMultiset.getPoint(multisetHashPublicKey);
 
         synchronized (this) {
             _point = _point.add(multisetPoint).normalize();
@@ -93,7 +93,7 @@ public class MultisetHash {
 
     public void addItem(final ByteArray byteArray) {
         final Sha256Hash byteArrayHash = HashUtil.sha256(byteArray);
-        final ECPoint point = MultisetHash.getPoint(byteArrayHash);
+        final ECPoint point = EcMultiset.getPoint(byteArrayHash);
 
         synchronized (this) {
             _point = _point.add(point).normalize();
@@ -102,7 +102,7 @@ public class MultisetHash {
 
     public void removeItem(final ByteArray byteArray) {
         final Sha256Hash byteArrayHash = HashUtil.sha256(byteArray);
-        final ECPoint point = MultisetHash.getPoint(byteArrayHash);
+        final ECPoint point = EcMultiset.getPoint(byteArrayHash);
 
         synchronized (this) {
             _point = _point.subtract(point).normalize();

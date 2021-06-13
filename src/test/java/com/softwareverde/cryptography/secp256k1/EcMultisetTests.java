@@ -10,7 +10,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class MultisetHashTests {
+public class EcMultisetTests {
     // Test Vectors obtained from: https://github.com/tomasvdw/bips/blob/master/ecmh.mediawiki#test-vectors
 
     public static final ByteArray D1_BYTES = ByteArray.fromHexString("982051FD1E4BA744BBBE680E1FEE14677BA1A3C3540BF7B1CDB606E857233E0E00000000010000000100F2052A0100000043410496B538E853519C726A2C91E61EC11600AE1390813A627C66FB8BE7947BE63C52DA7589379515D4E0A604F8141781E62294721166BF621E73A82CBF2342C858EEAC");
@@ -27,11 +27,11 @@ public class MultisetHashTests {
     public void should_be_an_empty_hash_if_empty() {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.EMPTY_HASH;
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        final Sha256Hash value = multisetHash.getHash();
-        final PublicKey publicKey = multisetHash.getPublicKey();
+        final Sha256Hash value = ecMultiset.getHash();
+        final PublicKey publicKey = ecMultiset.getPublicKey();
 
         // Assert
         Assert.assertEquals(expectedValue, value);
@@ -42,13 +42,13 @@ public class MultisetHashTests {
     public void should_calculate_multiset_hash_1() {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("F883195933A687170C34FA1ADEC66FE2861889279FB12C03A3FB0CA68AD87893");
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D1_BYTES);
+        ecMultiset.addItem(D1_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -56,13 +56,13 @@ public class MultisetHashTests {
     public void should_calculate_multiset_hash_2() {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("EF85D123A15DA95D8AFF92623AD1E1C9FCDA3BAA801BD40BC567A83A6FDCF3E2");
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D2_BYTES);
+        ecMultiset.addItem(D2_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -70,13 +70,13 @@ public class MultisetHashTests {
     public void should_calculate_multiset_hash_3() {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("CFADF40FC017FAFF5E04CCC0A2FAE0FD616E4226DD7C03B1334A7A610468EDFF");
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D3_BYTES);
+        ecMultiset.addItem(D3_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -85,17 +85,17 @@ public class MultisetHashTests {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("FABAFD38D07370982A34547DAF5B57B8A4398696D6FD2294788ABDA07B1FAAAF");
 
-        final MultisetHash multisetHash = new MultisetHash();
-        multisetHash.addItem(D1_BYTES);
+        final EcMultiset ecMultiset = new EcMultiset();
+        ecMultiset.addItem(D1_BYTES);
 
-        final MultisetHash d2MultisetHash = new MultisetHash();
-        d2MultisetHash.addItem(D2_BYTES);
+        final EcMultiset d2EcMultiset = new EcMultiset();
+        d2EcMultiset.addItem(D2_BYTES);
 
         // Action
-        multisetHash.add(d2MultisetHash);
+        ecMultiset.add(d2EcMultiset);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -104,14 +104,14 @@ public class MultisetHashTests {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("FABAFD38D07370982A34547DAF5B57B8A4398696D6FD2294788ABDA07B1FAAAF");
 
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D1_BYTES);
-        multisetHash.addItem(D2_BYTES);
+        ecMultiset.addItem(D1_BYTES);
+        ecMultiset.addItem(D2_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -120,21 +120,21 @@ public class MultisetHashTests {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("1CBCCDA23D7CE8C5A8B008008E1738E6BF9CFFB1D5B86A92A4E62B5394A636E2");
 
-        final MultisetHash multisetHash = new MultisetHash();
-        multisetHash.addItem(D1_BYTES);
+        final EcMultiset ecMultiset = new EcMultiset();
+        ecMultiset.addItem(D1_BYTES);
 
-        final MultisetHash d2MultisetHash = new MultisetHash();
-        d2MultisetHash.addItem(D2_BYTES);
+        final EcMultiset d2EcMultiset = new EcMultiset();
+        d2EcMultiset.addItem(D2_BYTES);
 
-        final MultisetHash d3MultisetHash = new MultisetHash();
-        d3MultisetHash.addItem(D3_BYTES);
+        final EcMultiset d3EcMultiset = new EcMultiset();
+        d3EcMultiset.addItem(D3_BYTES);
 
         // Action
-        multisetHash.add(d2MultisetHash);
-        multisetHash.add(d3MultisetHash);
+        ecMultiset.add(d2EcMultiset);
+        ecMultiset.add(d3EcMultiset);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -143,15 +143,15 @@ public class MultisetHashTests {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("1CBCCDA23D7CE8C5A8B008008E1738E6BF9CFFB1D5B86A92A4E62B5394A636E2");
 
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D1_BYTES);
-        multisetHash.addItem(D2_BYTES);
-        multisetHash.addItem(D3_BYTES);
+        ecMultiset.addItem(D1_BYTES);
+        ecMultiset.addItem(D2_BYTES);
+        ecMultiset.addItem(D3_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -160,16 +160,16 @@ public class MultisetHashTests {
         // Setup
         final Sha256Hash expectedValue = Sha256Hash.fromHexString("FABAFD38D07370982A34547DAF5B57B8A4398696D6FD2294788ABDA07B1FAAAF");
 
-        final MultisetHash multisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
 
         // Action
-        multisetHash.addItem(D1_BYTES);
-        multisetHash.addItem(D2_BYTES);
-        multisetHash.addItem(D3_BYTES);
-        multisetHash.removeItem(D3_BYTES);
+        ecMultiset.addItem(D1_BYTES);
+        ecMultiset.addItem(D2_BYTES);
+        ecMultiset.addItem(D3_BYTES);
+        ecMultiset.removeItem(D3_BYTES);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
@@ -180,62 +180,62 @@ public class MultisetHashTests {
 
         final PublicKey d1PublicKey;
         {
-            final MultisetHash multisetHash = new MultisetHash();
-            multisetHash.addItem(D1_BYTES);
-            d1PublicKey = multisetHash.getPublicKey();
+            final EcMultiset ecMultiset = new EcMultiset();
+            ecMultiset.addItem(D1_BYTES);
+            d1PublicKey = ecMultiset.getPublicKey();
         }
 
         final PublicKey d2PublicKey;
         {
-            final MultisetHash d2MultisetHash = new MultisetHash();
-            d2MultisetHash.addItem(D2_BYTES);
-            d2PublicKey = d2MultisetHash.getPublicKey().compress();
+            final EcMultiset d2EcMultiset = new EcMultiset();
+            d2EcMultiset.addItem(D2_BYTES);
+            d2PublicKey = d2EcMultiset.getPublicKey().compress();
         }
 
         final PublicKey d3PublicKey;
         {
-            final MultisetHash d3MultisetHash = new MultisetHash();
-            d3MultisetHash.addItem(D3_BYTES);
-            d3PublicKey = d3MultisetHash.getPublicKey().decompress();
+            final EcMultiset d3EcMultiset = new EcMultiset();
+            d3EcMultiset.addItem(D3_BYTES);
+            d3PublicKey = d3EcMultiset.getPublicKey().decompress();
         }
 
         // Action
-        final MultisetHash multisetHash = new MultisetHash(d1PublicKey);
-        multisetHash.add(d2PublicKey);
-        multisetHash.add(d3PublicKey);
+        final EcMultiset ecMultiset = new EcMultiset(d1PublicKey);
+        ecMultiset.add(d2PublicKey);
+        ecMultiset.add(d3PublicKey);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
     @Test
     public void should_noop_when_adding_two_empty_sets() {
         // Setup
-        final MultisetHash multisetHash = new MultisetHash();
-        final MultisetHash emptyMultisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
+        final EcMultiset emptyEcMultiset = new EcMultiset();
         final Sha256Hash expectedValue = Sha256Hash.EMPTY_HASH;
 
         // Action
-        multisetHash.add(emptyMultisetHash);
+        ecMultiset.add(emptyEcMultiset);
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 
     @Test
     public void should_noop_when_adding_empty_pk() {
         // Setup
-        final MultisetHash multisetHash = new MultisetHash();
-        final MultisetHash emptyMultisetHash = new MultisetHash();
+        final EcMultiset ecMultiset = new EcMultiset();
+        final EcMultiset emptyEcMultiset = new EcMultiset();
         final Sha256Hash expectedValue = Sha256Hash.EMPTY_HASH;
 
         // Action
-        multisetHash.add(emptyMultisetHash.getPublicKey());
+        ecMultiset.add(emptyEcMultiset.getPublicKey());
 
         // Assert
-        final Sha256Hash value = multisetHash.getHash();
+        final Sha256Hash value = ecMultiset.getHash();
         Assert.assertEquals(expectedValue, value);
     }
 }
