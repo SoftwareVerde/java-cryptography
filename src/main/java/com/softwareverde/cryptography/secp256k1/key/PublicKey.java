@@ -8,7 +8,7 @@ import com.softwareverde.cryptography.secp256k1.Secp256k1;
 import com.softwareverde.cryptography.secp256k1.signature.Signature;
 import com.softwareverde.logging.Logger;
 import com.softwareverde.util.ByteUtil;
-import com.softwareverde.util.Container;
+import com.softwareverde.util.HexUtil;
 import org.bouncycastle.math.ec.ECAlgorithms;
 import org.bouncycastle.math.ec.ECCurve;
 import org.bouncycastle.math.ec.ECPoint;
@@ -33,6 +33,18 @@ public class PublicKey extends ImmutableByteArray implements Const {
         if (bytes == null) { return null; }
 
         return new PublicKey(bytes);
+    }
+
+    public static PublicKey fromHexString(final String hexString) {
+        if (hexString == null) { return null; }
+
+        final byte[] byteArray = HexUtil.hexStringToByteArray(hexString);
+        if (byteArray == null) { return null; }
+
+        final PublicKey publicKey = new PublicKey(byteArray);
+        if (! publicKey.isValid()) { return null; }
+
+        return publicKey;
     }
 
     /**
