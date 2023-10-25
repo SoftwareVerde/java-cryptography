@@ -5,7 +5,7 @@
   "main": "aes_decrypt.js",
   "dependencies": {
     "buffer": "^5.6.0",
-    "crypto-js": "^4.0.0"
+    "crypto-js": "^4.2.0"
   },
   "devDependencies": {},
   "scripts": {
